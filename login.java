@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class login extends Application {
-
     private Stage window;
     private Scene loginScene, registerScene, forgotPasswordScene;
     private static final String CREDENTIALS_FILE = "src/login_information.txt"; // Path to the credentials file
