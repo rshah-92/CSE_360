@@ -8,8 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -17,9 +15,10 @@ import java.util.regex.Pattern;
 public class login extends Application {
     private Stage window;
     private Scene loginScene, registerScene, forgotPasswordScene;
-    private static final String CREDENTIALS_FILE = "login_information.txt"; // External file path for updates
-    private static final String TEMPORARY_PASSWORD = "1234"; // Temporary password for reset
-
+    private double initialX; // Variable to track the initial X coordinate for swipe detection
+    private static final String CREDENTIALS_FILE = "login_information.txt";
+    private static final String TEMPORARY_PASSWORD = "1234";
+    
     @Override
     public void start(Stage primaryStage) {
         window = primaryStage;
@@ -34,46 +33,67 @@ public class login extends Application {
         forgotPasswordScene = createForgotPasswordScene();
 
         window.setTitle("Sparky's Books");
+
+        // Set up focus control for all scenes
+        setInitialFocus(loginScene);
+        setInitialFocus(registerScene);
+        setInitialFocus(forgotPasswordScene);
+
         window.setScene(loginScene); // Show login scene at first
         window.show();
     }
 
- // Method to create the Login page
+    // Method to prevent TextFields from being focused by default in a scene
+    private void setInitialFocus(Scene scene) {
+        scene.setOnMouseEntered(e -> {
+            Pane rootPane = (Pane) scene.getRoot();
+            rootPane.requestFocus(); // Set focus to an invisible Pane
+        });
+    }
+
+    // Swipe gesture detection method
+    private void addSwipeNavigation(Scene scene, Runnable swipeLeftAction, Runnable swipeRightAction) {
+        scene.setOnMousePressed(e -> initialX = e.getSceneX());
+        scene.setOnMouseReleased(e -> {
+            double finalX = e.getSceneX();
+            if (initialX - finalX > 100) { // Swipe left (back)
+                swipeLeftAction.run();
+            } else if (finalX - initialX > 100) { // Swipe right (forward)
+                swipeRightAction.run();
+            }
+        });
+    }
+
+    // Method to create the Login page
     private Scene createLoginScene() {
         Label titleLabel = new Label("Log in to Sparky's Books");
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-        // Text fields for Email ID and password
         TextField emailField = new TextField();
         emailField.setPromptText("Email ID");
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
 
-        // Logo Placeholder (replace with actual image path)
         ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
-        logoView.setFitHeight(100); // Adjust the size as needed
+        logoView.setFitHeight(100);
         logoView.setPreserveRatio(true);
 
-        // Log in button
         Button loginButton = new Button("Login");
         loginButton.setOnAction(e -> {
             handleLogin(emailField.getText(), passwordField.getText());
             clearLoginFields(emailField, passwordField);
         });
 
-        // Register Now button
         Button registerButton = new Button("Register Now");
         registerButton.setOnAction(e -> {
             window.setScene(registerScene);
             clearLoginFields(emailField, passwordField);
         });
 
-        // Align Login and Register buttons horizontally
-        HBox buttonRow = new HBox(10); // Spacing between buttons
+        HBox buttonRow = new HBox(10);
         buttonRow.getChildren().addAll(loginButton, registerButton);
         buttonRow.setAlignment(Pos.CENTER);
 
-        // Forgot Password hyperlink (aligned left below the buttons)
         Hyperlink forgotPasswordLink = new Hyperlink("Forgot Password?");
         forgotPasswordLink.setOnAction(e -> {
             window.setScene(forgotPasswordScene);
@@ -81,18 +101,23 @@ public class login extends Application {
         });
         forgotPasswordLink.setAlignment(Pos.CENTER_LEFT);
 
-        // Layout for login form
-        VBox loginLayout = new VBox(10); // Spacing between form elements
+        VBox loginLayout = new VBox(10);
         loginLayout.getChildren().addAll(logoView, titleLabel, emailField, passwordField, buttonRow, forgotPasswordLink);
         loginLayout.setAlignment(Pos.CENTER);
         loginLayout.setPadding(new Insets(20));
-
-        // Set background color to #F0E3C2 using inline CSS
         loginLayout.setStyle("-fx-background-color: #F0E3C2;");
 
-        return new Scene(loginLayout, 600, 400);
-    }
+        // Add a placeholder Pane to prevent TextFields from being focused
+        Pane placeholderPane = new Pane();
+        loginLayout.getChildren().add(placeholderPane);
 
+        Scene loginScene = new Scene(loginLayout, 600, 400);
+
+        // Add swipe navigation to login scene
+        addSwipeNavigation(loginScene, () -> window.setScene(registerScene), () -> {});
+
+        return loginScene;
+    }
 
     // Method to create the Registration page
     private Scene createRegisterScene() {
@@ -110,29 +135,32 @@ public class login extends Application {
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setPromptText("Confirm password");
 
-        // Logo Placeholder (replace with actual image path)
         ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
-        logoView.setFitHeight(100); // Adjust the size as needed
+        logoView.setFitHeight(100);
         logoView.setPreserveRatio(true);
 
-        // Register button
         Button createAccountButton = new Button("Create Account");
         createAccountButton.setOnAction(e -> {
-            handleRegister(firstNameField.getText(), lastNameField.getText(),
-                    emailField.getText(), passwordField.getText(), confirmPasswordField.getText());
+            handleRegister(firstNameField.getText(), lastNameField.getText(), emailField.getText(), passwordField.getText(), confirmPasswordField.getText());
             clearRegisterFields(firstNameField, lastNameField, emailField, passwordField, confirmPasswordField);
         });
 
-        // Layout for register form
         VBox registerLayout = new VBox(10);
         registerLayout.getChildren().addAll(logoView, titleLabel, firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, createAccountButton);
         registerLayout.setAlignment(Pos.CENTER);
         registerLayout.setPadding(new Insets(20));
-
-        // Set background color to #F0E3C2 using inline CSS
         registerLayout.setStyle("-fx-background-color: #F0E3C2;");
 
-        return new Scene(registerLayout, 600, 400);
+        // Add a placeholder Pane to prevent TextFields from being focused
+        Pane placeholderPane = new Pane();
+        registerLayout.getChildren().add(placeholderPane);
+
+        Scene registerScene = new Scene(registerLayout, 600, 400);
+
+        // Add swipe navigation to register scene
+        addSwipeNavigation(registerScene, () -> window.setScene(forgotPasswordScene), () -> window.setScene(loginScene));
+
+        return registerScene;
     }
 
     // Method to create Forgot Password page
@@ -149,23 +177,28 @@ public class login extends Application {
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setPromptText("Confirm new password");
 
-        // Update Password button
         Button updatePasswordButton = new Button("Update Password");
         updatePasswordButton.setOnAction(e -> {
             handleForgotPassword(emailField.getText(), tempPasswordField.getText(), newPasswordField.getText(), confirmPasswordField.getText());
             clearForgotPasswordFields(emailField, tempPasswordField, newPasswordField, confirmPasswordField);
         });
 
-        // Layout for forgot password form
         VBox forgotPasswordLayout = new VBox(10);
         forgotPasswordLayout.getChildren().addAll(titleLabel, emailField, tempPasswordField, newPasswordField, confirmPasswordField, updatePasswordButton);
         forgotPasswordLayout.setAlignment(Pos.CENTER);
         forgotPasswordLayout.setPadding(new Insets(20));
-
-        // Set background color to #F0E3C2 using inline CSS
         forgotPasswordLayout.setStyle("-fx-background-color: #F0E3C2;");
 
-        return new Scene(forgotPasswordLayout, 600, 400);
+        // Add a placeholder Pane to prevent TextFields from being focused
+        Pane placeholderPane = new Pane();
+        forgotPasswordLayout.getChildren().add(placeholderPane);
+
+        Scene forgotPasswordScene = new Scene(forgotPasswordLayout, 600, 400);
+
+        // Add swipe navigation to forgot password scene
+        addSwipeNavigation(forgotPasswordScene, () -> {}, () -> window.setScene(registerScene));
+
+        return forgotPasswordScene;
     }
 
     // Method to handle login logic by checking the credentials from the file
@@ -216,7 +249,7 @@ public class login extends Application {
             return;
         }
 
-        // Save credentials to an external file (not in src)
+        // Save credentials to an external file 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE, true))) {
             writer.write(email + "," + firstName + "," + lastName + "," + password);
             writer.newLine();
@@ -346,7 +379,7 @@ public class login extends Application {
         alert.showAndWait();
     }
 
-    // Clear all login fields
+ // Clear all login fields
     private void clearLoginFields(TextField emailField, PasswordField passwordField) {
         emailField.clear();
         passwordField.clear();
