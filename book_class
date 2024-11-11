@@ -1,0 +1,119 @@
+//Book class
+
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+
+public class Book {
+
+    private SimpleIntegerProperty bookID;
+    private SimpleDoubleProperty originalPrice;
+    private SimpleStringProperty category;
+    private SimpleStringProperty author;
+    private SimpleStringProperty title;
+    private SimpleIntegerProperty status;
+    private SimpleIntegerProperty sellerID;
+    private SimpleStringProperty condition;
+    private SimpleDoubleProperty sellPrice;
+    private int[] formula;
+
+    // Percentage attributes for pricing based on condition
+    private float likeNewPercent;
+    private float moderatePercent;
+    private float heavilyUsedPercent;
+
+    // Constructor
+    public Book(int bookID, double originalPrice, String category, String author, String title, int status, int sellerID, String condition) {
+        this.bookID = new SimpleIntegerProperty(bookID);
+        this.originalPrice = new SimpleDoubleProperty(originalPrice);
+        this.category = new SimpleStringProperty(category);
+        this.author = new SimpleStringProperty(author);
+        this.title = new SimpleStringProperty(title);
+        this.status = new SimpleIntegerProperty(status);
+        this.sellerID = new SimpleIntegerProperty(sellerID);
+        this.condition = new SimpleStringProperty(condition);
+        this.sellPrice = new SimpleDoubleProperty(0); // Will be calculated
+    }
+
+    // Getters and setters for the percentages
+    public void setLikeNewPercent(float likeNewPercent) {
+        this.likeNewPercent = likeNewPercent;
+    }
+
+    public void setModeratePercent(float moderatePercent) {
+        this.moderatePercent = moderatePercent;
+    }
+
+    public void setHeavilyUsedPercent(float heavilyUsedPercent) {
+        this.heavilyUsedPercent = heavilyUsedPercent;
+    }
+
+    // Method to compute selling price based on condition
+    public double computeSellPrice() {
+        switch (condition.get().toLowerCase()) {
+            case "like new":
+                sellPrice.set(originalPrice.get() * likeNewPercent / 100);
+                break;
+            case "moderate":
+                sellPrice.set(originalPrice.get() * moderatePercent / 100);
+                break;
+            case "heavily used":
+                sellPrice.set(originalPrice.get() * heavilyUsedPercent / 100);
+                break;
+            default:
+                sellPrice.set(0); // Default if condition is unknown
+                break;
+        }
+        return sellPrice.get();
+    }
+
+    // Method to set the formula array
+    public void setFormula(int[] formula) {
+        this.formula = formula;
+    }
+
+    // Additional getters for properties (JavaFX properties for UI binding)
+    public int getBookID() {
+        return bookID.get();
+    }
+
+    public double getOriginalPrice() {
+        return originalPrice.get();
+    }
+
+    public String getCategory() {
+        return category.get();
+    }
+
+    public String getAuthor() {
+        return author.get();
+    }
+
+    public String getTitle() {
+        return title.get();
+    }
+
+    public int getStatus() {
+        return status.get();
+    }
+
+    public int getSellerID() {
+        return sellerID.get();
+    }
+
+    public String getCondition() {
+        return condition.get();
+    }
+
+    public double getSellPrice() {
+        return sellPrice.get();
+    }
+
+    // toString for displaying book details
+    @Override
+    public String toString() {
+        return "Book [BookID=" + getBookID() + ", Title=" + getTitle() + ", Author=" + getAuthor() +
+                ", Category=" + getCategory() + ", Original Price=" + getOriginalPrice() + 
+                ", Sell Price=" + getSellPrice() + ", Condition=" + getCondition() + "]";
+    }
+}
