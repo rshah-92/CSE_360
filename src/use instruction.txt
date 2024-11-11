@@ -1,0 +1,24 @@
+Sparky's Books Login and Registration System
+
+This program allows users to log in, register, and reset their password for the Sparky's Books. The user information is stored in an external text file named `login_information.txt`.
+
+Instructions:
+1. When you run the program, the login screen will appear.
+   - Enter your email and password to log in.
+   - If your credentials are correct, a message will confirm a successful login.
+   - If you don’t have an account, click the "Register Now" button to go to the registration page.
+
+2. On the registration page:
+   - Fill in your first name, last name, email, and password (password must be at least 8 characters).
+   - Click "Create Account" to register.
+   - If registration is successful, the program will return to the login screen, and you can log in with your new credentials.
+
+3. If you forgot your password:
+   - Click on the "Forgot Password?" link from the login page.
+   - Enter your email and the temporary password (`1234` by default).
+   - You will be asked to set a new password.
+
+File Descriptions:
+- `login.java`: The main Java file containing the program code for the login, registration, and password reset.
+- `login_information.txt`: The text file where user information (email, name, and password) is saved. It will be created if it doesn't exist during the first run.
+
