@@ -2,6 +2,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -10,9 +11,11 @@ import javafx.stage.Stage;
 public class BuyersDashboard {
 
     private Stage window;
+    private Cart cart;
 
-    public BuyersDashboard(Stage window) {
+    public BuyersDashboard(Stage window, Cart cart) {
         this.window = window;
+        this.cart = cart;
     }
 
     public void showDashboard() {
@@ -20,14 +23,13 @@ public class BuyersDashboard {
         layout.setPadding(new Insets(20));
         layout.setStyle("-fx-background-color: #f3f4f6;");
 
-        // Create the header with logo, profile icon, and cart button
+        // Create the header
         HBox header = createHeader();
 
-        // Placeholder for categories or main content
-        VBox mainContent = createMainContent();
+        // Create main content with scrollable list
+        ScrollPane scrollableContent = createScrollableContent();
 
-        // Adding header and main content to the layout
-        layout.getChildren().addAll(header, mainContent);
+        layout.getChildren().addAll(header, scrollableContent);
 
         Scene scene = new Scene(layout, 800, 600);
         window.setScene(scene);
@@ -39,17 +41,7 @@ public class BuyersDashboard {
         header.setPadding(new Insets(10));
         header.setStyle("-fx-background-color: #3b5998;");
 
-        // Placeholder for Logo
-        ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
-        logoView.setFitHeight(40);
-        logoView.setPreserveRatio(true);
-
-        // Cart button with event handler to open CartWindow
-        Button cartButton = new Button("Cart");
-        cartButton.setStyle("-fx-background-color: #f0e3c2; -fx-font-size: 14px; -fx-padding: 5px;");
-        cartButton.setOnAction(e -> openCartWindow());  // Open cart window on click
-        
-        // Placeholder for Profile Icon
+        // Profile icon
         ImageView profileView = new ImageView(new Image(getClass().getResource("/black.jpeg").toExternalForm()));
         profileView.setFitHeight(30);
         profileView.setPreserveRatio(true);
@@ -57,37 +49,54 @@ public class BuyersDashboard {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        header.getChildren().addAll(logoView, spacer, cartButton, profileView);
+        Button viewCartButton = new Button("View Cart");
+        viewCartButton.setOnAction(e -> cart.showCart(window));
+
+        // Logo
+        ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
+        logoView.setFitHeight(40);
+        logoView.setPreserveRatio(true);
+
+        header.getChildren().addAll(logoView, spacer, viewCartButton, profileView);
         return header;
     }
 
-    private VBox createMainContent() {
-        VBox mainContent = new VBox(15);
-        mainContent.setPadding(new Insets(20, 0, 0, 0));
-        
-        Label title = new Label("Buyer's Dashboard");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+    private ScrollPane createScrollableContent() {
+        VBox bookList = new VBox(15);
+        bookList.setPadding(new Insets(20));
+        bookList.setStyle("-fx-background-color: #ffffff;");
 
-        // Placeholder buttons for categories
-        Button mathButton = new Button("Mathematics");
-        Button csButton = new Button("Computer Science");
-        Button englishButton = new Button("English");
-        Button scienceButton = new Button("Science");
+        // Placeholder for book items
+        for (int i = 1; i <= 10; i++) {
+            HBox bookItem = createBookItem("Book Title " + i, "Author " + i, "$" + (10 + i));
+            bookList.getChildren().add(bookItem);
+        }
 
-        // Set style for buttons to make them look minimalistic and consistent
-        mathButton.setStyle("-fx-pref-width: 200px; -fx-padding: 10px;");
-        csButton.setStyle("-fx-pref-width: 200px; -fx-padding: 10px;");
-        englishButton.setStyle("-fx-pref-width: 200px; -fx-padding: 10px;");
-        scienceButton.setStyle("-fx-pref-width: 200px; -fx-padding: 10px;");
-
-        // Adding placeholders to main content
-        mainContent.getChildren().addAll(title, mathButton, csButton, englishButton, scienceButton);
-        return mainContent;
+        ScrollPane scrollPane = new ScrollPane(bookList);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background: #f3f4f6;");
+        return scrollPane;
     }
 
-    // Method to open the cart window
-    private void openCartWindow() {
-        Cart cart = new Cart(window);
-        cart.show();
+    private HBox createBookItem(String title, String author, String price) {
+        HBox bookItem = new HBox(10);
+        bookItem.setPadding(new Insets(10));
+        bookItem.setStyle("-fx-background-color: #e7e7e7; -fx-border-color: #cccccc; -fx-border-radius: 5px;");
+        bookItem.setPrefHeight(80);
+
+        Label bookDetails = new Label(title + "\n" + author + "\n" + price);
+        bookDetails.setStyle("-fx-font-size: 14px; -fx-text-fill: #000000;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Button addToCartButton = new Button("Add to Cart");
+        addToCartButton.setOnAction(e -> {
+            book_class book = new book_class(title, author, Double.parseDouble(price.substring(1)), price, price); // Dummy book object
+            cart.addBookToCart(book);
+        });
+
+        bookItem.getChildren().addAll(bookDetails, spacer, addToCartButton);
+        return bookItem;
     }
 }

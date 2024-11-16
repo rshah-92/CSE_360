@@ -3,44 +3,51 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cart {
 
-    private Stage cartStage;
+    private List<book_class> cartBooks;
 
-    public Cart(Stage owner) {
-        cartStage = new Stage();
-        cartStage.initModality(Modality.WINDOW_MODAL);
-        cartStage.initOwner(owner);
-        cartStage.setTitle("Your Cart");
-
-        // Layout for cart items
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-background-color: #f3f4f6;");
-
-        // Placeholder for cart items
-        Label cartTitle = new Label("Cart Items");
-        cartTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-
-        Label item1 = new Label("Item 1 - $10");
-        Label item2 = new Label("Item 2 - $15");
-        Label item3 = new Label("Item 3 - $20");
-
-        // Close button
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(e -> cartStage.close());
-
-        // Adding components to layout
-        layout.getChildren().addAll(cartTitle, item1, item2, item3, closeButton);
-
-        Scene scene = new Scene(layout, 300, 400);
-        cartStage.setScene(scene);
+    public Cart() {
+        this.cartBooks = new ArrayList<>();
     }
 
-    public void show() {
-        cartStage.show();
+    public void addBookToCart(book_class book) {
+        cartBooks.add(book);
+    }
+
+    public void showCart(Stage parentWindow) {
+        Stage cartWindow = new Stage();
+        cartWindow.setTitle("Your Cart");
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setStyle("-fx-background-color: #f8f9fa;");
+
+        Label cartTitle = new Label("Cart");
+        cartTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        if (cartBooks.isEmpty()) {
+            Label emptyCartLabel = new Label("Your cart is currently empty.");
+            layout.getChildren().addAll(cartTitle, emptyCartLabel);
+        } else {
+            for (book_class book : cartBooks) {
+                Label bookDetails = new Label(book.getTitle() + " - $" + book.getPrice());
+                layout.getChildren().add(bookDetails);
+            }
+        }
+
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(e -> cartWindow.close());
+        layout.getChildren().add(closeButton);
+
+        Scene scene = new Scene(layout, 400, 300);
+        cartWindow.setScene(scene);
+        cartWindow.initOwner(parentWindow);
+        cartWindow.show();
     }
 }

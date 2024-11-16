@@ -201,7 +201,6 @@ public class login extends Application {
         return forgotPasswordScene;
     }
 
-    // Method to handle login logic by checking the credentials from the file
     private void handleLogin(String email, String password) {
         if (!isValidEmail(email)) {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Email format.");
@@ -212,12 +211,14 @@ public class login extends Application {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Email or password cannot be empty.");
         } else if (credentials.containsKey(email) && credentials.get(email)[2].equals(password)) {
             // Successful login: Redirect to the Buyer's Dashboard
-            BuyersDashboard buyersDashboard = new BuyersDashboard(window);
+            Cart cart = new Cart(); // Create a Cart instance
+            BuyersDashboard buyersDashboard = new BuyersDashboard(window, cart);
             buyersDashboard.showDashboard();
         } else {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Email or password.");
         }
     }
+
 
     // Method to handle registration logic and save the user information
     private void handleRegister(String firstName, String lastName, String email, String password, String confirmPassword) {
