@@ -1,25 +1,20 @@
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import java.awt.print.Book;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 
 public class Cart extends Application {
     private int cartID;                    // Unique cart ID
     private double currentAmount;           // Total amount of items in the cart
-    private Buyer buyer;                    // Buyer associated with this cart
-    private ArrayList<Listing> listings;    // List of items in the cart
+    //private Buyer buyer;                    // Buyer associated with this cart
+    private ArrayList<Book> listings;    // List of items in the cart
 
     private Label totalLabel;
 
     public Cart() {
         this.cartID = generateCartID();
         this.currentAmount = 0.0;
-        this.listings = new ArrayList<>();
+        this.listings = new ArrayList<Book>();
     }
 
     @Override
@@ -45,9 +40,7 @@ public class Cart extends Application {
                 String itemName = itemNameField.getText();
                 double itemPrice = Double.parseDouble(itemPriceField.getText());
                 int quantity = Integer.parseInt(quantityField.getText());
-
-                Listing listing = new Listing(itemName, itemPrice);
-                listings.add(listing);
+                listings.add(Book);
                 currentAmount += itemPrice * quantity;
 
                 totalLabel.setText("Total Amount: $" + currentAmount);
