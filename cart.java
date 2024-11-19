@@ -1,7 +1,17 @@
-import java.awt.print.Book;
+import javafx.scene.control.TextField;
 import java.util.ArrayList;
-
-import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.application.Application;
 
 public class Cart extends Application {
     private int cartID;                    // Unique cart ID
@@ -17,14 +27,14 @@ public class Cart extends Application {
         this.listings = new ArrayList<Book>();
     }
 
-    @Override
+
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Cart");
 
         // Initialize the cart
         cart();
 
-        // UI elements for adding items to the cart
+     // UI elements for adding items to the cart
         TextField itemNameField = new TextField();
         itemNameField.setPromptText("Item Name");
 
@@ -34,14 +44,37 @@ public class Cart extends Application {
         TextField quantityField = new TextField();
         quantityField.setPromptText("Quantity");
 
+        TextField categoryField = new TextField();
+        categoryField.setPromptText("Category");
+
+        TextField authorField = new TextField();
+        authorField.setPromptText("Author");
+
+        TextField conditionField = new TextField();
+        conditionField.setPromptText("Condition");
+
+        // Button to add items to the cart
         Button addItemButton = new Button("Add Item");
         addItemButton.setOnAction(e -> {
             try {
-                String itemName = itemNameField.getText();
-                double itemPrice = Double.parseDouble(itemPriceField.getText());
-                int quantity = Integer.parseInt(quantityField.getText());
-                listings.add(Book);
-                currentAmount += itemPrice * quantity;
+                // Get input values from the fields
+            	int quantity = Integer.parseInt(quantityField.getText()); // User-provided quantity
+
+                // Define default values for the Book
+                int bookID = listings.size() + 1; // Automatically generate unique book ID
+                double originalPrice = 20.00; // Default price for the book
+                String category = "Default Category"; // Default category
+                String author = "Default Author"; // Default author
+                String title = "Default Title"; // Default title
+                String condition = "New"; // Default condition
+                int status = 1; // Default status
+                int sellerID = 0; // Default seller ID
+
+                // Create the Book object with default values
+                Book book = new Book(bookID, originalPrice, category, author, title, status, sellerID, condition);
+
+                listings.add(book);
+                currentAmount += originalPrice * quantity;
 
                 totalLabel.setText("Total Amount: $" + currentAmount);
 
@@ -131,5 +164,8 @@ public class Cart extends Application {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-}
+    public static void main(String[] args) {
+    	launch(args);
+    }
+    
+    }
