@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 public class transaction {
     private int transID;
     private int totalAmount;
@@ -89,8 +92,25 @@ public class transaction {
     }
 
     // Add transaction to database
-    public void addTransactionToDatabase() {
-
+    public void addTransactionToDatabase(String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            writer.write("Transaction ID: " + transID);
+            writer.newLine();
+            writer.write("Total Amount: " + totalAmount);
+            writer.newLine();
+            writer.write("Date: " + date);
+            writer.newLine();
+            writer.write("Buyer: " + (buyer != null ? buyer.getName() : "N/A"));
+            writer.newLine();
+            writer.write("Seller: " + (seller != null ? seller.getName() : "N/A"));
+            writer.newLine();
+            writer.write("Book: " + (book != null ? book.getTitle() : "N/A"));
+            writer.newLine();
+            writer.write("------------------------------");
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error writing to the file: " + e.getMessage());
+        }
     }
 }
 
