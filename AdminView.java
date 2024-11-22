@@ -34,7 +34,7 @@ public class AdminView extends Application{
 
     private void updateDashboardMetrics() {
         try {
-            int totalUsers = countLines("src/main/resources/com/example/sparkysbookssystem/data/users.txt");
+            int totalUsers = countLines("pathToFile/users.txt"); // FIXME: Must be linked to the actual location of database file
             int totalActiveListings = countBooksByStatus("Available");
             int totalSoldListings = countBooksByStatus("Sold");
             double totalRevenue = calculateTotalRevenue();
@@ -64,7 +64,7 @@ public class AdminView extends Application{
 
     // Utility: Count books by status
     private int countBooksByStatus(String status) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/com/example/sparkysbookssystem/data/books.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("pathToFile/books.txt"))) { // FIXME: Must be linked to the actual location of database file
             int count = 0;
             String line;
             while ((line = reader.readLine()) != null) {
@@ -78,7 +78,7 @@ public class AdminView extends Application{
 
     // Utility: Calculate total revenue
     private double calculateTotalRevenue() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/com/example/sparkysbookssystem/data/transactions.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("pathToFile/transactions.txt"))) { // FIXME: Must be linked to the actual location of database file
             double totalRevenue = 0.0;
             String line;
             while ((line = reader.readLine()) != null) {
