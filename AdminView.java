@@ -1,5 +1,5 @@
 package com.example.sparkysbookssystem;
-
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -8,7 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class AdminView {
+public class AdminView extends Application{
 
     // Labels for metrics
     @FXML
