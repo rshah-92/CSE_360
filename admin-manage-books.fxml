@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.sparkysbookssystem.AdminManageBooks"
+      spacing="20" alignment="CENTER" prefHeight="400.0" prefWidth="600.0">
+
+    <Label text="Manage Books" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <TableView fx:id="booksTable" prefHeight="250" prefWidth="500">
+        <columns>
+            <TableColumn text="Book ID" fx:id="bookIdColumn" />
+            <TableColumn text="Title" fx:id="titleColumn" />
+            <TableColumn text="Status" fx:id="statusColumn" />
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Edit Book" onAction="#handleEditBook" style="-fx-background-color: gold;" />
+        <Button text="Delete Book" onAction="#handleDeleteBook" style="-fx-background-color: gold;" />
+    </HBox>
+
+    <Button text="Back to Dashboard" onAction="#handleBackToDashboard" style="-fx-background-color: gold;" />
+</VBox>
