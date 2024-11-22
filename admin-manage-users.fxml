@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.sparkysbookssystem.AdminManageUsers"
+      spacing="20" alignment="CENTER" prefHeight="400.0" prefWidth="600.0">
+
+    <Label text="Manage Users" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <TableView fx:id="usersTable" prefHeight="250" prefWidth="500">
+        <columns>
+            <TableColumn text="User ID" fx:id="userIdColumn" />
+            <TableColumn text="Username" fx:id="usernameColumn" />
+            <TableColumn text="Role" fx:id="roleColumn" />
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add User" onAction="#handleAddUser" style="-fx-background-color: gold;" />
+        <Button text="Edit User" onAction="#handleEditUser" style="-fx-background-color: gold;" />
+        <Button text="Delete User" onAction="#handleDeleteUser" style="-fx-background-color: gold;" />
+    </HBox>
+
+    <Button text="Back to Dashboard" onAction="#handleBackToDashboard" style="-fx-background-color: gold;" />
+</VBox>
