@@ -1,50 +1,45 @@
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 
 public class Book {
+    private final SimpleIntegerProperty bookID;
+    private final SimpleStringProperty title;
+    private final SimpleStringProperty author;
+    private final SimpleDoubleProperty originalPrice;
+    private final SimpleStringProperty category;
+    private final SimpleStringProperty condition;
+    private final SimpleDoubleProperty sellPrice;
 
-    private SimpleIntegerProperty bookID;
-    private SimpleDoubleProperty originalPrice;
-    private SimpleStringProperty category;
-    private SimpleStringProperty author;
-    private SimpleStringProperty title;
-    private SimpleIntegerProperty status;
-    private SimpleIntegerProperty sellerID;
-    private SimpleStringProperty condition;
-    private SimpleDoubleProperty sellPrice;
-
-    public Book(int bookID, double originalPrice, String category, String author, String title, int status, int sellerID, String condition) {
+    public Book(int bookID, String title, String author, double originalPrice, String category, String condition) {
         this.bookID = new SimpleIntegerProperty(bookID);
+        this.title = new SimpleStringProperty(title);
+        this.author = new SimpleStringProperty(author);
         this.originalPrice = new SimpleDoubleProperty(originalPrice);
         this.category = new SimpleStringProperty(category);
-        this.author = new SimpleStringProperty(author);
-        this.title = new SimpleStringProperty(title);
-        this.status = new SimpleIntegerProperty(status);
-        this.sellerID = new SimpleIntegerProperty(sellerID);
         this.condition = new SimpleStringProperty(condition);
-        this.sellPrice = new SimpleDoubleProperty(0);
+        this.sellPrice = new SimpleDoubleProperty(computeSellPrice(originalPrice, condition));
     }
 
-    public double computeSellPrice() {
-        switch (condition.get().toLowerCase()) {
-            case "like new":
-                sellPrice.set(originalPrice.get() * 0.8);
-                break;
-            case "moderate":
-                sellPrice.set(originalPrice.get() * 0.5);
-                break;
-            case "heavily used":
-                sellPrice.set(originalPrice.get() * 0.3);
-                break;
-            default:
-                sellPrice.set(0);
+    public double computeSellPrice(double originalPrice, String condition) {
+        switch (condition.toLowerCase()) {
+            case "used like new": return originalPrice * 0.8;
+            case "moderately used": return originalPrice * 0.5;
+            case "heavily used": return originalPrice * 0.3;
+            default: return 0;
         }
-        return sellPrice.get();
     }
 
-	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public int getBookID() { return bookID.get(); }
+    public String getTitle() { return title.get(); }
+    public String getAuthor() { return author.get(); }
+    public double getOriginalPrice() { return originalPrice.get(); }
+    public String getCategory() { return category.get(); }
+    public String getCondition() { return condition.get(); }
+    public double getSellPrice() { return sellPrice.get(); }
+
+    @Override
+    public String toString() {
+        return "Book [ID=" + bookID.get() + ", Title=" + title.get() + ", Author=" + author.get() +
+               ", Category=" + category.get() + ", Condition=" + condition.get() + 
+               ", Sell Price=$" + sellPrice.get() + "]";
+    }
 }

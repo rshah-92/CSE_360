@@ -1,102 +1,218 @@
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class BuyersDashboard {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private Stage window;
-    private Cart cart;
+public class BuyersDashboard {
+    private final Stage window;
+    private final Cart cart;
+    private final List<Book> allBooks = new ArrayList<>();
+    private final VBox booksDisplay = new VBox(10); // Vertical layout for books
 
     public BuyersDashboard(Stage window, Cart cart) {
         this.window = window;
         this.cart = cart;
+
+        // Example books
+        allBooks.add(new Book(1, "The Great Gatsby", "F. Scott Fitzgerald", 20.0, "Fiction", "Used Like New"));
+        allBooks.add(new Book(2, "A Brief History of Time", "Stephen Hawking", 15.0, "Science", "Moderately Used"));
+        allBooks.add(new Book(3, "To Kill a Mockingbird", "Harper Lee", 10.0, "Fiction", "Heavily Used"));
+        allBooks.add(new Book(4, "Sapiens", "Yuval Noah Harari", 25.0, "History", "Used Like New"));
+        allBooks.add(new Book(5, "1984", "George Orwell", 18.0, "Fiction", "Used Like New"));
+        allBooks.add(new Book(6, "Cosmos", "Carl Sagan", 30.0, "Science", "Moderately Used"));
+        allBooks.add(new Book(7, "A History of Time", "Stephen Hawking", 15.0, "Science", "Moderately Used"));
+        allBooks.add(new Book(8, "To a Mockingbird", "Harper Lee", 10.0, "Fiction", "Heavily Used"));
+        allBooks.add(new Book(9, "Sapns", "Yuval Noah Harari", 25.0, "History", "Used Like New"));
+        allBooks.add(new Book(10, "14", "George Orwell", 18.0, "Fiction", "Used Like New"));
     }
 
     public void showDashboard() {
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setStyle("-fx-background-color: #f3f4f6;");
+        BorderPane layout = new BorderPane();
 
-        // Create the header
-        HBox header = createHeader();
+        // Top Navigation Bar
+        HBox topNavBar = createTopNavBar();
 
-        // Create main content with scrollable list
-        ScrollPane scrollableContent = createScrollableContent();
+        // Search and Filters
+        VBox searchAndFilters = createSearchAndFilters();
 
-        layout.getChildren().addAll(header, scrollableContent);
+        // Books Display Area with Vertical Scroll
+        ScrollPane booksScrollPane = createScrollableBooksDisplay();
 
-        Scene scene = new Scene(layout, 800, 600);
+        VBox content = new VBox(20, searchAndFilters, booksScrollPane);
+        content.setPadding(new Insets(20));
+
+        layout.setTop(topNavBar);
+        layout.setCenter(content);
+
+        Scene scene = new Scene(layout, 900, 600);
         window.setScene(scene);
-        window.show();
     }
 
-    private HBox createHeader() {
-        HBox header = new HBox(10);
-        header.setPadding(new Insets(10));
-        header.setStyle("-fx-background-color: #3b5998;");
+    private HBox createTopNavBar() {
+        HBox topNavBar = new HBox(10);
+        topNavBar.setPadding(new Insets(10));
+        topNavBar.setStyle("-fx-background-color: #f0f0f0;");
+        topNavBar.setAlignment(Pos.CENTER_LEFT);
 
-        // Profile icon
-        ImageView profileView = new ImageView(new Image(getClass().getResource("/black.jpeg").toExternalForm()));
-        profileView.setFitHeight(30);
-        profileView.setPreserveRatio(true);
+        // Logo
+        ImageView logo = new ImageView();
+        try {
+            logo.setImage(new Image(getClass().getResourceAsStream("/logo.png")));
+            logo.setFitHeight(40);
+            logo.setPreserveRatio(true);
+        } catch (Exception e) {
+            System.err.println("Error loading logo.png: " + e.getMessage());
+        }
 
+        // Spacer
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button viewCartButton = new Button("View Cart");
-        viewCartButton.setOnAction(e -> cart.showCart(window));
-
-        // Logo
-        ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
-        logoView.setFitHeight(40);
-        logoView.setPreserveRatio(true);
-
-        header.getChildren().addAll(logoView, spacer, viewCartButton, profileView);
-        return header;
-    }
-
-    private ScrollPane createScrollableContent() {
-        VBox bookList = new VBox(15);
-        bookList.setPadding(new Insets(20));
-        bookList.setStyle("-fx-background-color: #ffffff;");
-
-        // Placeholder for book items
-        for (int i = 1; i <= 10; i++) {
-            HBox bookItem = createBookItem("Book Title " + i, "Author " + i, "$" + (10 + i));
-            bookList.getChildren().add(bookItem);
+        // User Icon
+        ImageView userIcon = new ImageView();
+        try {
+            userIcon.setImage(new Image(getClass().getResourceAsStream("/user.png")));
+            userIcon.setFitHeight(30);
+            userIcon.setPreserveRatio(true);
+        } catch (Exception e) {
+            System.err.println("Error loading user.png: " + e.getMessage());
         }
 
-        ScrollPane scrollPane = new ScrollPane(bookList);
+        // Cart Button
+        Button cartButton = new Button("Cart");
+        cartButton.setOnAction(e -> cart.showCart(window));
+
+        topNavBar.getChildren().addAll(logo, spacer, userIcon, cartButton);
+        return topNavBar;
+    }
+
+    private VBox createSearchAndFilters() {
+        VBox searchAndFilters = new VBox(10);
+        searchAndFilters.setPadding(new Insets(10));
+        searchAndFilters.setStyle("-fx-border-color: #cccccc; -fx-border-width: 1px;");
+
+        // Search Bar
+        HBox searchBar = new HBox(10);
+        searchBar.setPadding(new Insets(5));
+
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search based on titles and authors");
+        searchField.setPrefWidth(600);
+
+        Button searchButton = new Button("Search");
+        searchButton.setOnAction(e -> {
+            String query = searchField.getText().toLowerCase();
+            List<Book> filteredBooks = allBooks.stream()
+                    .filter(book -> book.getTitle().toLowerCase().contains(query) ||
+                                    book.getAuthor().toLowerCase().contains(query))
+                    .collect(Collectors.toList());
+
+            if (filteredBooks.isEmpty()) {
+                booksDisplay.getChildren().clear();
+                booksDisplay.getChildren().add(new Label("No results found for your search."));
+            } else {
+                refreshBooksDisplay(filteredBooks);
+            }
+        });
+
+        searchBar.getChildren().addAll(searchField, searchButton);
+
+        // Filters
+        VBox filters = new VBox(10);
+        filters.setPadding(new Insets(10));
+
+        ComboBox<String> categoryFilter = new ComboBox<>();
+        categoryFilter.getItems().addAll("All Categories", "Fiction", "Science", "History");
+        categoryFilter.setValue("All Categories");
+
+        ComboBox<String> conditionFilter = new ComboBox<>();
+        conditionFilter.getItems().addAll("All Conditions", "Used Like New", "Moderately Used", "Heavily Used");
+        conditionFilter.setValue("All Conditions");
+
+        Button applyFiltersButton = new Button("Apply Filters");
+        applyFiltersButton.setOnAction(e -> {
+            String selectedCategory = categoryFilter.getValue();
+            String selectedCondition = conditionFilter.getValue();
+
+            List<Book> filteredBooks = allBooks.stream()
+                    .filter(book -> (selectedCategory.equals("All Categories") || book.getCategory().equals(selectedCategory)) &&
+                                    (selectedCondition.equals("All Conditions") || book.getCondition().equals(selectedCondition)))
+                    .collect(Collectors.toList());
+
+            refreshBooksDisplay(filteredBooks);
+        });
+
+        filters.getChildren().addAll(
+                new Label("Filters:"),
+                new HBox(10, new Label("Category:"), categoryFilter),
+                new HBox(10, new Label("Condition:"), conditionFilter),
+                applyFiltersButton
+        );
+
+        searchAndFilters.getChildren().addAll(searchBar, filters);
+        return searchAndFilters;
+    }
+
+    private ScrollPane createScrollableBooksDisplay() {
+        booksDisplay.setPadding(new Insets(10));
+        refreshBooksDisplay(allBooks); // Show all books by default
+
+        ScrollPane scrollPane = new ScrollPane(booksDisplay);
+        scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: #f3f4f6;");
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Ensure vertical scroll
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // No horizontal scroll
         return scrollPane;
     }
 
-    private HBox createBookItem(String title, String author, String price) {
-        HBox bookItem = new HBox(10);
-        bookItem.setPadding(new Insets(10));
-        bookItem.setStyle("-fx-background-color: #e7e7e7; -fx-border-color: #cccccc; -fx-border-radius: 5px;");
-        bookItem.setPrefHeight(80);
+    private void refreshBooksDisplay(List<Book> books) {
+        booksDisplay.getChildren().clear();
+        GridPane booksGrid = new GridPane();
+        booksGrid.setHgap(10);
+        booksGrid.setVgap(10);
 
-        Label bookDetails = new Label(title + "\n" + author + "\n" + price);
-        bookDetails.setStyle("-fx-font-size: 14px; -fx-text-fill: #000000;");
+        for (int i = 0; i < books.size(); i++) {
+            VBox bookCard = createBookCard(books.get(i));
+            booksGrid.add(bookCard, i % 4, i / 4); // Three cards per row
+        }
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        booksDisplay.getChildren().add(booksGrid);
+    }
+
+    private VBox createBookCard(Book book) {
+        VBox card = new VBox(5);
+        card.setPadding(new Insets(10));
+        card.setStyle("-fx-border-color: #cccccc; -fx-border-width: 1px; -fx-background-color: #f9f9f9;");
+        card.setAlignment(Pos.CENTER);
+        card.setPrefWidth(200);
+
+        Label titleLabel = new Label(book.getTitle());
+        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        Label authorLabel = new Label("Author: " + book.getAuthor());
+        Label categoryLabel = new Label("Category: " + book.getCategory());
+        Label conditionLabel = new Label("Condition: " + book.getCondition());
+        Label priceLabel = new Label("Price: $" + book.getSellPrice());
 
         Button addToCartButton = new Button("Add to Cart");
         addToCartButton.setOnAction(e -> {
-            book_class book = new book_class(title, author, Double.parseDouble(price.substring(1)), price, price); // Dummy book object
             cart.addBookToCart(book);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setHeaderText(null);
+            alert.setContentText("Added " + book.getTitle() + " to your cart!");
+            alert.showAndWait();
         });
 
-        bookItem.getChildren().addAll(bookDetails, spacer, addToCartButton);
-        return bookItem;
+        card.getChildren().addAll(titleLabel, authorLabel, categoryLabel, conditionLabel, priceLabel, addToCartButton);
+        return card;
     }
 }
