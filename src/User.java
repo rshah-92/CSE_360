@@ -1,32 +1,35 @@
 public class User {
-    private String username;
+    private static int nextID = 0;
+    private int userID;
+    private String email;
     private String password;
-    private String role; // "Buyer" or "Seller"
+    private int userRole;
 
-    public User(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
+    public User() {
+        this.userID = 0;
+        this.email = "";
+        this.password = "";
+        this.userRole = -1;
     }
 
-    public String getUsername() {
-        return username;
+    public User(int id, String e, String p, int r) {
+        this.userID = id;
+        this.email = e;
+        this.password = p;
+        this.userRole = r;
     }
 
-    public String getPassword() {
-        return password;
+    public User(String e, String p, int r) {
+        this.userID = nextID++;
+        this.email = e;
+        this.password = p;
+        this.userRole = r;
     }
 
-    public String getRole() {
-        return role;
-    }
+    public int getUserID() { return this.userID; }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public String getEmail() { return this.email; }
 
-	public String getEmail() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void setPassword(String p) { this.password = p; }
+
 }

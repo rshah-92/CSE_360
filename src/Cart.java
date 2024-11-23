@@ -35,7 +35,7 @@ public class Cart {
         Label cartTitle = new Label("Your Cart");
         cartTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
-        VBox cartContent = new VBox(10); // Container for the cart's content
+        VBox cartContent = new VBox(10);
         refreshCartContent(cartContent);
 
         Button clearCartButton = new Button("Clear Cart");
@@ -77,13 +77,11 @@ public class Cart {
             cartGrid.setVgap(10);
             cartGrid.setPadding(new Insets(10));
 
-            // Headers
             cartGrid.add(new Label("Title"), 0, 0);
             cartGrid.add(new Label("Author"), 1, 0);
             cartGrid.add(new Label("Price"), 2, 0);
-            cartGrid.add(new Label(""), 3, 0); // Empty header for "X" marks
+            cartGrid.add(new Label(""), 3, 0);
 
-            // Populate rows
             for (int i = 0; i < cartBooks.size(); i++) {
                 Book book = cartBooks.get(i);
                 cartGrid.add(new Label(book.getTitle()), 0, i + 1);
@@ -94,7 +92,7 @@ public class Cart {
                 removeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: red; -fx-font-size: 14px;");
                 removeButton.setOnAction(e -> {
                     removeBookFromCart(book);
-                    refreshCartContent(cartContent); // Instantly refresh the cart content
+                    refreshCartContent(cartContent);
                 });
 
                 cartGrid.add(removeButton, 3, i + 1);
