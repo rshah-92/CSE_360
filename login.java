@@ -121,19 +121,35 @@ public class login extends Application {
 
     // Method to create the Registration page
     private Scene createRegisterScene() {
-        Label titleLabel = new Label("Create an account");
+        Label titleLabel = new Label("Create an Account");
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
         TextField firstNameField = new TextField();
-        firstNameField.setPromptText("First name");
+        firstNameField.setPromptText("First Name");
+
         TextField lastNameField = new TextField();
-        lastNameField.setPromptText("Last name");
+        lastNameField.setPromptText("Last Name");
+
         TextField emailField = new TextField();
         emailField.setPromptText("Email ID");
+
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
+
         PasswordField confirmPasswordField = new PasswordField();
-        confirmPasswordField.setPromptText("Confirm password");
+        confirmPasswordField.setPromptText("Confirm Password");
+
+        // Replace dropdown with radio buttons for role selection
+        Label roleLabel = new Label("Select Account Type:");
+        RadioButton buyerButton = new RadioButton("Buyer");
+        RadioButton sellerButton = new RadioButton("Seller");
+        ToggleGroup roleGroup = new ToggleGroup();
+        buyerButton.setToggleGroup(roleGroup);
+        sellerButton.setToggleGroup(roleGroup);
+
+        HBox roleLayout = new HBox(10);
+        roleLayout.getChildren().addAll(roleLabel, buyerButton, sellerButton);
+        roleLayout.setAlignment(Pos.CENTER);
 
         ImageView logoView = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
         logoView.setFitHeight(100);
@@ -141,24 +157,49 @@ public class login extends Application {
 
         Button createAccountButton = new Button("Create Account");
         createAccountButton.setOnAction(e -> {
-            handleRegister(firstNameField.getText(), lastNameField.getText(), emailField.getText(), passwordField.getText(), confirmPasswordField.getText());
-            clearRegisterFields(firstNameField, lastNameField, emailField, passwordField, confirmPasswordField);
+            // Check which role is selected
+            RadioButton selectedRole = (RadioButton) roleGroup.getSelectedToggle();
+            if (selectedRole == null) {
+                showAlert(Alert.AlertType.ERROR, "Registration Failed", "Please select an account type.");
+                return;
+            }
+
+            String role = selectedRole.getText();
+            handleRegister(
+                firstNameField.getText(),
+                lastNameField.getText(),
+                emailField.getText(),
+                passwordField.getText(),
+                confirmPasswordField.getText(),
+                role
+            );
+            clearRegisterFields(firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, roleGroup);
+        });
+
+        Button backButton = new Button("Back to Login");
+        backButton.setOnAction(e -> {
+            clearRegisterFields(firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, roleGroup);
+            window.setScene(loginScene);
         });
 
         VBox registerLayout = new VBox(10);
-        registerLayout.getChildren().addAll(logoView, titleLabel, firstNameField, lastNameField, emailField, passwordField, confirmPasswordField, createAccountButton);
+        registerLayout.getChildren().addAll(
+            logoView,
+            titleLabel,
+            firstNameField,
+            lastNameField,
+            emailField,
+            passwordField,
+            confirmPasswordField,
+            roleLayout, // Add the role selection layout
+            createAccountButton,
+            backButton
+        );
         registerLayout.setAlignment(Pos.CENTER);
         registerLayout.setPadding(new Insets(20));
         registerLayout.setStyle("-fx-background-color: #F0E3C2;");
 
-        // Add a placeholder Pane to prevent TextFields from being focused
-        Pane placeholderPane = new Pane();
-        registerLayout.getChildren().add(placeholderPane);
-
         Scene registerScene = new Scene(registerLayout, 600, 400);
-
-        // Add swipe navigation to register scene
-        addSwipeNavigation(registerScene, () -> window.setScene(forgotPasswordScene), () -> window.setScene(loginScene));
 
         return registerScene;
     }
@@ -201,29 +242,56 @@ public class login extends Application {
         return forgotPasswordScene;
     }
 
-    // Method to handle login logic by checking the credentials from the file
     private void handleLogin(String email, String password) {
         if (!isValidEmail(email)) {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Email format.");
             return;
         }
+
         Map<String, String[]> credentials = loadCredentialsFromFile();
+
         if (email.isEmpty() || password.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Email or password cannot be empty.");
-        } else if (credentials.containsKey(email) && credentials.get(email)[2].equals(password)) {
-            String firstName = credentials.get(email)[0];
-            String lastName = credentials.get(email)[1];
-            showAlert(Alert.AlertType.INFORMATION, "Login Successful", "Welcome, " + firstName + " " + lastName + "!");
+            return;
+        }
+
+        if (credentials.containsKey(email)) {
+            String[] userDetails = credentials.get(email);
+
+            // Validate array length before accessing
+            if (userDetails.length < 4) {
+                showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid credentials format. Please contact support.");
+                return;
+            }
+
+            // Check password
+            if (userDetails[2].equals(password)) {
+                String role = userDetails[3]; // Safely access role
+                if ("Buyer".equals(role)) {
+                    Cart cart = new Cart();
+                    BuyersDashboard buyersDashboard = new BuyersDashboard(window, cart);
+                    buyersDashboard.showDashboard();
+                } else if ("Seller".equals(role)) {
+                    SellerDashboard sellerDashboard = new SellerDashboard(window);
+                    sellerDashboard.showDashboard();
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Login Failed", "Unknown role. Please contact support.");
+                }
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Email or password.");
+            }
         } else {
-            showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid Email or password.");
+            showAlert(Alert.AlertType.ERROR, "Login Failed", "No account found with this email.");
         }
     }
 
-    // Method to handle registration logic and save the user information
-    private void handleRegister(String firstName, String lastName, String email, String password, String confirmPassword) {
+
+
+ // Method to handle registration logic and save the user information
+    private void handleRegister(String firstName, String lastName, String email, String password, String confirmPassword, String role) {
         // Basic validation
-        if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Registration Failed", "All fields must be filled.");
+        if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role == null) {
+            showAlert(Alert.AlertType.ERROR, "Registration Failed", "All fields must be filled, and an account type must be selected.");
             return;
         }
 
@@ -249,16 +317,17 @@ public class login extends Application {
             return;
         }
 
-        // Save credentials to an external file 
+        // Save credentials to an external file including role
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE, true))) {
-            writer.write(email + "," + firstName + "," + lastName + "," + password);
+            writer.write(email + "," + firstName + "," + lastName + "," + password + "," + role);
             writer.newLine();
-            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created for " + firstName + " " + lastName + ".");
+            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created for " + firstName + " " + lastName + " as a " + role + ".");
             window.setScene(loginScene); // Redirect to login page after successful registration
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Could not save credentials.");
         }
     }
+
 
     // Method to handle password reset logic
     private void handleForgotPassword(String email, String tempPassword, String newPassword, String confirmPassword) {
@@ -309,45 +378,35 @@ public class login extends Application {
     // Method to load credentials from the file into a HashMap
     private Map<String, String[]> loadCredentialsFromFile() {
         Map<String, String[]> credentials = new HashMap<>();
-        File file = new File(CREDENTIALS_FILE); // External file path
 
-        // Check if the external credentials file exists, if not, initialize it by reading from src
-        if (!file.exists()) {
-            initializeExternalCredentialsFile();
-        }
-
-        // Read the credentials from the external file
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CREDENTIALS_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                // Trim the line to remove extra whitespace or line-end characters
+                line = line.trim();
+
+                // Split the line and validate the number of fields
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
-                    credentials.put(parts[0], new String[]{parts[1], parts[2], parts[3]}); // Store Email as key and {firstName, lastName, password} as value
+                if (parts.length == 5) { // Expecting 5 fields: email, firstName, lastName, password, role
+                    credentials.put(parts[0].trim(), new String[]{
+                        parts[1].trim(),
+                        parts[2].trim(),
+                        parts[3].trim(),
+                        parts[4].trim()
+                    });
+                } else {
+                    // Log the malformed line for debugging
+                    System.err.println("Malformed line in credentials file: " + line);
                 }
             }
+
+            // Debug log to check loaded credentials
+            System.out.println("Loaded credentials: " + credentials);
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Error reading credentials file.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not load credentials file.");
         }
 
         return credentials;
-    }
-
-    // Initialize the external file by copying data from the internal file in the src folder
-    private void initializeExternalCredentialsFile() {
-        try (InputStream is = getClass().getResourceAsStream("/login_information.txt");
-             BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE))) {
-
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    writer.write(line);
-                    writer.newLine();
-                }
-            }
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Error initializing external credentials file.");
-        }
     }
 
     // Method to save updated credentials back to the file
@@ -379,20 +438,23 @@ public class login extends Application {
         alert.showAndWait();
     }
 
- // Clear all login fields
+    // Clear all login fields
     private void clearLoginFields(TextField emailField, PasswordField passwordField) {
         emailField.clear();
         passwordField.clear();
     }
 
     // Clear all register fields
-    private void clearRegisterFields(TextField firstNameField, TextField lastNameField, TextField emailField, PasswordField passwordField, PasswordField confirmPasswordField) {
+    private void clearRegisterFields(TextField firstNameField, TextField lastNameField, TextField emailField, PasswordField passwordField, PasswordField confirmPasswordField, ToggleGroup roleGroup) {
         firstNameField.clear();
         lastNameField.clear();
         emailField.clear();
         passwordField.clear();
         confirmPasswordField.clear();
+        roleGroup.selectToggle(null); // Clear role selection
     }
+
+
 
     // Clear all forgot password fields
     private void clearForgotPasswordFields(TextField emailField, TextField tempPasswordField, PasswordField newPasswordField, PasswordField confirmPasswordField) {
