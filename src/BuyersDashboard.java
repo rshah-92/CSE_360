@@ -21,17 +21,37 @@ public class BuyersDashboard {
         this.window = window;
         this.cart = cart;
 
-        // Example books
-        allBooks.add(new Book(1, "The Great Gatsby", "F. Scott Fitzgerald", 20.0, "Fiction", "Used Like New"));
-        allBooks.add(new Book(2, "A Brief History of Time", "Stephen Hawking", 15.0, "Science", "Moderately Used"));
-        allBooks.add(new Book(3, "To Kill a Mockingbird", "Harper Lee", 10.0, "Fiction", "Heavily Used"));
-        allBooks.add(new Book(4, "Sapiens", "Yuval Noah Harari", 25.0, "History", "Used Like New"));
-        allBooks.add(new Book(5, "1984", "George Orwell", 18.0, "Fiction", "Used Like New"));
-        allBooks.add(new Book(6, "Cosmos", "Carl Sagan", 30.0, "Science", "Moderately Used"));
-        allBooks.add(new Book(7, "A History of Time", "Stephen Hawking", 15.0, "Science", "Moderately Used"));
-        allBooks.add(new Book(8, "To a Mockingbird", "Harper Lee", 10.0, "Fiction", "Heavily Used"));
-        allBooks.add(new Book(9, "Sapns", "Yuval Noah Harari", 25.0, "History", "Used Like New"));
-        allBooks.add(new Book(10, "14", "George Orwell", 18.0, "Fiction", "Used Like New"));
+        allBooks.add(new Book(1, "The Great Gatsby", "F. Scott Fitzgerald", Double.parseDouble(String.format("%.2f", 35.50)), "Literature", "Used Like New"));
+        allBooks.add(new Book(2, "To Kill a Mockingbird", "Harper Lee", Double.parseDouble(String.format("%.2f", 20.75)), "Fiction", "Moderately Used"));
+        allBooks.add(new Book(3, "1984", "George Orwell", Double.parseDouble(String.format("%.2f", 15.30)), "History", "Heavily Used"));
+        allBooks.add(new Book(4, "A Brief History of Time", "Stephen Hawking", Double.parseDouble(String.format("%.2f", 42.10)), "Natural Sciences", "Used Like New"));
+        allBooks.add(new Book(5, "Introduction to Algorithms", "Thomas H. Cormen", Double.parseDouble(String.format("%.2f", 28.90)), "Computer Science", "Moderately Used"));
+        allBooks.add(new Book(6, "Pride and Prejudice", "Jane Austen", Double.parseDouble(String.format("%.2f", 22.40)), "Literature", "Used Like New"));
+        allBooks.add(new Book(7, "The Catcher in the Rye", "J.D. Salinger", Double.parseDouble(String.format("%.2f", 18.75)), "English", "Heavily Used"));
+        allBooks.add(new Book(8, "Sapiens", "Yuval Noah Harari", Double.parseDouble(String.format("%.2f", 40.60)), "History", "Used Like New"));
+        allBooks.add(new Book(9, "The Art of Computer Programming", "Donald Knuth", Double.parseDouble(String.format("%.2f", 45.30)), "Computer Science", "Moderately Used"));
+        allBooks.add(new Book(10, "Mathematics: Its Content, Methods, and Meaning", "A.D. Aleksandrov", Double.parseDouble(String.format("%.2f", 33.20)), "Mathematics", "Used Like New"));
+        allBooks.add(new Book(11, "Java: The Complete Reference", "Herbert Schildt", Double.parseDouble(String.format("%.2f", 29.95)), "Computer Science", "Moderately Used"));
+        allBooks.add(new Book(12, "Cosmos", "Carl Sagan", Double.parseDouble(String.format("%.2f", 18.25)), "Natural Sciences", "Heavily Used"));
+        allBooks.add(new Book(13, "The Road to Reality", "Roger Penrose", Double.parseDouble(String.format("%.2f", 38.75)), "Natural Sciences", "Used Like New"));
+        allBooks.add(new Book(14, "The Theory of Everything", "Stephen Hawking", Double.parseDouble(String.format("%.2f", 27.80)), "Natural Sciences", "Moderately Used"));
+        allBooks.add(new Book(15, "Clean Code", "Robert C. Martin", Double.parseDouble(String.format("%.2f", 35.15)), "Computer Science", "Used Like New"));
+        allBooks.add(new Book(16, "Brave New World", "Aldous Huxley", Double.parseDouble(String.format("%.2f", 30.50)), "Fiction", "Used Like New"));
+        allBooks.add(new Book(17, "Crime and Punishment", "Fyodor Dostoevsky", Double.parseDouble(String.format("%.2f", 20.40)), "Literature", "Moderately Used"));
+        allBooks.add(new Book(18, "War and Peace", "Leo Tolstoy", Double.parseDouble(String.format("%.2f", 40.30)), "Literature", "Used Like New"));
+        allBooks.add(new Book(19, "Dune", "Frank Herbert", Double.parseDouble(String.format("%.2f", 25.60)), "Fiction", "Used Like New"));
+        allBooks.add(new Book(20, "The Hobbit", "J.R.R. Tolkien", Double.parseDouble(String.format("%.2f", 22.75)), "Fiction", "Moderately Used"));
+        allBooks.add(new Book(21, "The Fellowship of the Ring", "J.R.R. Tolkien", Double.parseDouble(String.format("%.2f", 32.50)), "Fiction", "Used Like New"));
+        allBooks.add(new Book(22, "The Two Towers", "J.R.R. Tolkien", Double.parseDouble(String.format("%.2f", 28.90)), "Fiction", "Moderately Used"));
+        allBooks.add(new Book(23, "The Return of the King", "J.R.R. Tolkien", Double.parseDouble(String.format("%.2f", 35.00)), "Fiction", "Used Like New"));
+        allBooks.add(new Book(24, "The Shining", "Stephen King", Double.parseDouble(String.format("%.2f", 18.60)), "Horror", "Heavily Used"));
+        allBooks.add(new Book(25, "It", "Stephen King", Double.parseDouble(String.format("%.2f", 30.40)), "Horror", "Moderately Used"));
+        allBooks.add(new Book(26, "The Stand", "Stephen King", Double.parseDouble(String.format("%.2f", 35.50)), "Horror", "Used Like New"));
+        allBooks.add(new Book(27, "Pet Sematary", "Stephen King", Double.parseDouble(String.format("%.2f", 25.10)), "Horror", "Moderately Used"));
+        allBooks.add(new Book(28, "Foundation", "Isaac Asimov", Double.parseDouble(String.format("%.2f", 22.50)), "Science Fiction", "Used Like New"));
+        allBooks.add(new Book(29, "I, Robot", "Isaac Asimov", Double.parseDouble(String.format("%.2f", 20.70)), "Science Fiction", "Moderately Used"));
+        allBooks.add(new Book(30, "Neuromancer", "William Gibson", Double.parseDouble(String.format("%.2f", 18.90)), "Science Fiction", "Used Like New"));
+
     }
 
     public void showDashboard() {
@@ -79,7 +99,7 @@ public class BuyersDashboard {
         // User Icon
         ImageView userIcon = new ImageView();
         try {
-            userIcon.setImage(new Image(getClass().getResourceAsStream("/user.png")));
+            userIcon.setImage(new Image(getClass().getResourceAsStream("/ASU_mark_1_M.jpg")));
             userIcon.setFitHeight(30);
             userIcon.setPreserveRatio(true);
         } catch (Exception e) {
@@ -130,7 +150,7 @@ public class BuyersDashboard {
         filters.setPadding(new Insets(10));
 
         ComboBox<String> categoryFilter = new ComboBox<>();
-        categoryFilter.getItems().addAll("All Categories", "Fiction", "Science", "History");
+        categoryFilter.getItems().addAll("All Categories", "Fiction", "Science", "History", "Mathematics");
         categoryFilter.setValue("All Categories");
 
         ComboBox<String> conditionFilter = new ComboBox<>();
@@ -200,7 +220,8 @@ public class BuyersDashboard {
         Label authorLabel = new Label("Author: " + book.getAuthor());
         Label categoryLabel = new Label("Category: " + book.getCategory());
         Label conditionLabel = new Label("Condition: " + book.getCondition());
-        Label priceLabel = new Label("Price: $" + book.getSellPrice());
+        Label priceLabel = new Label("Price: $" + String.format("%.2f", book.getSellPrice()));
+
 
         Button addToCartButton = new Button("Add to Cart");
         addToCartButton.setOnAction(e -> {

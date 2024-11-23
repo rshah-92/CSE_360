@@ -2,7 +2,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Transaction {
+public class Transactions {
     private int transID;
     private double totalAmount;
     private String date;
@@ -10,7 +10,7 @@ public class Transaction {
     private User seller;
     private Book book;
 
-    public Transaction(int transID, double totalAmount, String date, User buyer, User seller, Book book) {
+    public Transactions(int transID, double totalAmount, String date, User buyer, User seller, Book book) {
         this.transID = transID;
         this.totalAmount = totalAmount;
         this.date = date;
